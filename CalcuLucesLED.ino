@@ -90,35 +90,7 @@ LCDWIKI_KBV my_lcd(ILI9486,A3,A2,A1,A0,A4); //model,cs,cd,wr,rd,reset
 
 TouchScreen ts = TouchScreen(XP, YP, XM, YM, 300);
 
-typedef struct _button_info
-{
-     uint8_t button_name[10];
-     uint8_t button_name_size;
-     uint16_t button_name_colour;
-     uint16_t button_colour;
-     uint16_t button_x;
-     uint16_t button_y;     
- }button_info;
-
-//the definition of buttons
-button_info phone_button[15] = 
-{
-  "1",4,BLACK,CYAN,EDG_X+BUTTON_R-1,my_lcd.Get_Display_Height()-EDG_Y-4*BUTTON_SPACING_Y-9*BUTTON_R-1,
-  "2",4,BLACK,CYAN,EDG_X+3*BUTTON_R+BUTTON_SPACING_X-1,my_lcd.Get_Display_Height()-EDG_Y-4*BUTTON_SPACING_Y-9*BUTTON_R-1,
-  "3",4,BLACK,CYAN,EDG_X+5*BUTTON_R+2*BUTTON_SPACING_X-1,my_lcd.Get_Display_Height()-EDG_Y-4*BUTTON_SPACING_Y-9*BUTTON_R-1,
-  "4",4,BLACK,CYAN,EDG_X+BUTTON_R-1,my_lcd.Get_Display_Height()-EDG_Y-3*BUTTON_SPACING_Y-7*BUTTON_R-1, 
-  "5",4,BLACK,CYAN,EDG_X+3*BUTTON_R+BUTTON_SPACING_X-1,my_lcd.Get_Display_Height()-EDG_Y-3*BUTTON_SPACING_Y-7*BUTTON_R-1,
-  "6",4,BLACK,CYAN,EDG_X+5*BUTTON_R+2*BUTTON_SPACING_X-1,my_lcd.Get_Display_Height()-EDG_Y-3*BUTTON_SPACING_Y-7*BUTTON_R-1,
-  "7",4,BLACK,CYAN,EDG_X+BUTTON_R-1,my_lcd.Get_Display_Height()-EDG_Y-2*BUTTON_SPACING_Y-5*BUTTON_R-1,
-  "8",4,BLACK,CYAN,EDG_X+3*BUTTON_R+BUTTON_SPACING_X-1,my_lcd.Get_Display_Height()-EDG_Y-2*BUTTON_SPACING_Y-5*BUTTON_R-1,
-  "9",4,BLACK,CYAN,EDG_X+5*BUTTON_R+2*BUTTON_SPACING_X-1,my_lcd.Get_Display_Height()-EDG_Y-2*BUTTON_SPACING_Y-5*BUTTON_R-1,
-  "*",4,BLACK,PINK,EDG_X+BUTTON_R-1,my_lcd.Get_Display_Height()-EDG_Y-BUTTON_SPACING_Y-3*BUTTON_R-1,
-  "0",4,BLACK,CYAN,EDG_X+3*BUTTON_R+BUTTON_SPACING_X-1,my_lcd.Get_Display_Height()-EDG_Y-BUTTON_SPACING_Y-3*BUTTON_R-1,
-  "#",4,BLACK,PINK,EDG_X+5*BUTTON_R+2*BUTTON_SPACING_X-1,my_lcd.Get_Display_Height()-EDG_Y-BUTTON_SPACING_Y-3*BUTTON_R-1,
-  "end",3,BLACK,RED,EDG_X+BUTTON_R-1,my_lcd.Get_Display_Height()-EDG_Y-BUTTON_R-1,
-  "call",3,BLACK,GREEN,EDG_X+3*BUTTON_R+BUTTON_SPACING_X-1,my_lcd.Get_Display_Height()-EDG_Y-BUTTON_R-1,
-  "dele",3,BLACK,LIGHTGREY,EDG_X+5*BUTTON_R+2*BUTTON_SPACING_X-1,my_lcd.Get_Display_Height()-EDG_Y-BUTTON_R-1,
-};
+bool bUnidad = true;
 
 //display string
 void show_string(uint8_t *str,int16_t x,int16_t y,uint8_t csize,uint16_t fc, uint16_t bc,boolean mode)
@@ -144,7 +116,7 @@ boolean is_pressed(int16_t x1,int16_t y1,int16_t x2,int16_t y2,int16_t px,int16_
  }
 
 //display the main menu
-void show_menu(void)
+void show_keyboard(void)
 {
 //    uint16_t i;
 //   for(i = 0;i < sizeof(phone_button)/sizeof(button_info);i++)
@@ -153,11 +125,10 @@ void show_menu(void)
 //      my_lcd.Fill_Circle(phone_button[i].button_x, phone_button[i].button_y, BUTTON_R);
 //      show_string(phone_button[i].button_name,phone_button[i].button_x-strlen(phone_button[i].button_name)*phone_button[i].button_name_size*6/2+phone_button[i].button_name_size/2+1,phone_button[i].button_y-phone_button[i].button_name_size*8/2+phone_button[i].button_name_size/2+1,phone_button[i].button_name_size,phone_button[i].button_name_colour,BLACK,1);
 //   }
-//   my_lcd.Set_Draw_color(BLACK);
-//   my_lcd.Fill_Rectangle(1, 1, my_lcd.Get_Display_Width()-2, 3);
-//   my_lcd.Fill_Rectangle(1, 45, my_lcd.Get_Display_Width()-2, 47);
-//   my_lcd.Fill_Rectangle(1, 1, 3, 47);
-//   my_lcd.Fill_Rectangle(my_lcd.Get_Display_Width()-4, 1, my_lcd.Get_Display_Width()-2, 47);
+
+    my_lcd.Set_Draw_color(BLACK);// Aquí se muestra los sumandos!!!
+    my_lcd.Fill_Round_Rectangle(110, 10, 215, 160, 5);
+  
     my_lcd.Set_Draw_color(WHITE);
     my_lcd.Fill_Circle(45, 265, 30);
     show_string("0",35,250,4,BLACK, WHITE,1);
@@ -210,8 +181,45 @@ void show_menu(void)
     my_lcd.Set_Text_Size(2);
     my_lcd.Set_Text_colour(WHITE);    
     my_lcd.Print_String("INFO@XKEMATIC.COM",60,450);
-    
-    delay(50000);
+}
+
+void ShowSumatill_10(void)
+{// como la suma sumará como mucho 10 los números a sumar tienen que cumplir este requisito
+  int iRand1, iRand2;
+  String str1, str2;
+ 
+  iRand1 = random(0,10);
+  iRand2 = random(0,(9-iRand1));
+
+  str1 = iRand1;
+  str2 = iRand2;
+  my_lcd.Set_Draw_color(BLACK);// Aquí se muestra los sumandos!!!
+  my_lcd.Fill_Round_Rectangle(110, 10, 215, 100, 5);  
+  my_lcd.Set_Text_Mode(3);
+  my_lcd.Set_Text_Size(5);
+  my_lcd.Set_Text_colour(WHITE);
+  my_lcd.Set_Text_Back_colour(BLACK);
+  if (str1 == "10")
+  {
+      my_lcd.Print_String(str1,150,20); 
+  } else
+  {
+      my_lcd.Print_String(str1,180,20); 
+  }
+  my_lcd.Print_String("+",115,42); 
+  if (str2 == "10")
+  {
+      my_lcd.Print_String(str2,150,65); 
+  } else
+  {
+      my_lcd.Print_String(str2,180,65); 
+  }
+  
+  my_lcd.Set_Draw_color(WHITE);
+  my_lcd.Draw_Line(120, 105, 215, 105);
+  my_lcd.Draw_Line(120, 106, 215, 106);
+  my_lcd.Draw_Line(120, 107, 215, 107);
+  my_lcd.Draw_Line(120, 108, 215, 108);
 }
                             
 void setup(void) 
@@ -220,72 +228,193 @@ void setup(void)
    my_lcd.Init_LCD();
    Serial.println(my_lcd.Read_ID(), HEX);
    my_lcd.Fill_Screen(BLUE); 
-   show_menu();
+   show_keyboard();
+   ShowSumatill_10();
 }
-
-uint16_t text_x=7,text_y=10,text_x_add = 6*phone_button[0].button_name_size,text_y_add = 8*phone_button[0].button_name_size;
-uint16_t n=0;
 
 void loop(void)
 {
-  uint16_t i;
+  
   digitalWrite(13, HIGH);
+  digitalWrite(52, HIGH);
   TSPoint p = ts.getPoint();
   digitalWrite(13, LOW);
-
+  digitalWrite(52, LOW);
+  
   pinMode(XM, OUTPUT);
   pinMode(YP, OUTPUT);
+
+//  my_lcd.Set_Draw_color(RED);
+//  my_lcd.Draw_Line(5, 230, 315, 230);//primera linea horizontal que es común a todas las areas
+//  my_lcd.Draw_Line(5, 300, 315, 300);//segunda linea horizontal que es común a todas las areas
+//  my_lcd.Draw_Line(5, 370, 315, 370);//tercera linea horizontal que es común a todas las areas
+//  my_lcd.Draw_Line(5, 440, 315, 440);//cuarta linea horizontal que es común a todas las areas
+//  my_lcd.Draw_Line(5, 230, 5, 440); //primera linea vertical que es común a todas las areas
+//  my_lcd.Draw_Line(82, 230, 82, 440); //segunda linea vertical que es común a todas las areas
+//  my_lcd.Draw_Line(158, 230, 158, 440); //tercera linea vertical que es común a todas las areas
+//  my_lcd.Draw_Line(233, 230, 233, 440); //cuarta linea vertical que es común a todas las areas
+  
   if (p.z > MINPRESSURE && p.z < MAXPRESSURE)
   {
     //p.x = my_lcd.Get_Display_Width()-map(p.x, TS_MINX, TS_MAXX, my_lcd.Get_Display_Width(), 0);
     //p.y = my_lcd.Get_Display_Height()-map(p.y, TS_MINY, TS_MAXY, my_lcd.Get_Display_Height(), 0);
     p.x = map(p.x, TS_MINX, TS_MAXX, my_lcd.Get_Display_Width(),0);
     p.y = map(p.y, TS_MINY, TS_MAXY, my_lcd.Get_Display_Height(),0);
-    
-    for(i=0;i<sizeof(phone_button)/sizeof(button_info);i++)
+
+    if ((p.x>5) && (p.x<82) && (p.y>230) && (p.y<300))
     {
-         //press the button
-         if(is_pressed(phone_button[i].button_x-BUTTON_R,phone_button[i].button_y-BUTTON_R,phone_button[i].button_x+BUTTON_R,phone_button[i].button_y+BUTTON_R,p.x,p.y))
-         {
-              my_lcd.Set_Draw_color(DARKGREY);
-              my_lcd.Fill_Circle(phone_button[i].button_x, phone_button[i].button_y, BUTTON_R);
-              show_string(phone_button[i].button_name,phone_button[i].button_x-strlen(phone_button[i].button_name)*phone_button[i].button_name_size*6/2+phone_button[i].button_name_size/2+1,phone_button[i].button_y-phone_button[i].button_name_size*8/2+phone_button[i].button_name_size/2+1,phone_button[i].button_name_size,WHITE,BLACK,1);
-              delay(100);
-              my_lcd.Set_Draw_color(phone_button[i].button_colour);
-              my_lcd.Fill_Circle(phone_button[i].button_x, phone_button[i].button_y, BUTTON_R);
-              show_string(phone_button[i].button_name,phone_button[i].button_x-strlen(phone_button[i].button_name)*phone_button[i].button_name_size*6/2+phone_button[i].button_name_size/2+1,phone_button[i].button_y-phone_button[i].button_name_size*8/2+phone_button[i].button_name_size/2+1,phone_button[i].button_name_size,phone_button[i].button_name_colour,BLACK,1);  
-              if(i < 12)
-              {
-                  if(n < 13)
-                  {
-                    show_string(phone_button[i].button_name,text_x,text_y,phone_button[i].button_name_size,GREENYELLOW, BLACK,1);
-                    text_x += text_x_add-1;
-                    n++;
-                  }
-              }
-              else if(12 == i) //show calling ended
-              {
-                  my_lcd.Set_Draw_color(BLUE);
-                  my_lcd.Fill_Rectangle(0, 48, my_lcd.Get_Display_Width()-1, 60);
-                  show_string("Calling ended",CENTER,52,1,RED, BLACK,1);  
-              } 
-              else if(13 == i) //show calling
-              {
-                  my_lcd.Set_Draw_color(BLUE);
-                  my_lcd.Fill_Rectangle(0, 48, my_lcd.Get_Display_Width()-1, 60);
-                  show_string("Calling...",CENTER,52,1,GREEN, BLACK,1);  
-              }
-              else if(14 == i) //delete button
-              {
-                  if(n > 0)
-                  {
-                      my_lcd.Set_Draw_color(BLUE);
-                      text_x -= (text_x_add-1);  
-                      my_lcd.Fill_Rectangle(text_x, text_y, text_x+text_x_add-1, text_y+text_y_add-2);
-                      n--; 
-                  }
-              }
-         }      
-     }
+      //he pulsado 0
+      delay(250);
+      if (bUnidad)
+      {
+        my_lcd.Print_String("0",180,115);
+        bUnidad = false; 
+      } else
+      {
+        my_lcd.Print_String("0",150,115);
+      }
+      p.x = 0;
+      p.y = 0;
+    } else if ((p.x>82) && (p.x<158) && (p.y>230) && (p.y<300))
+    {
+      //he pulsado 1
+      delay(250);
+      if (bUnidad)
+      {
+        my_lcd.Print_String("1",180,115);
+        bUnidad = false; 
+      } else
+      {
+        my_lcd.Print_String("1",150,115);
+      }
+      p.x = 0;
+      p.y = 0;
+    }else if ((p.x>158) && (p.x<233) && (p.y>230) && (p.y<300))
+    {
+      //he pulsado 2
+      delay(250);
+      if (bUnidad)
+      {
+        my_lcd.Print_String("2",180,115);
+        bUnidad = false; 
+      } else
+      {
+        my_lcd.Print_String("2",150,115);
+      }
+      p.x = 0;
+      p.y = 0;
+    }else if ((p.x>233) && (p.x<315) && (p.y>230) && (p.y<300))
+    {
+      //he pulsado 3
+      delay(250);
+      if (bUnidad)
+      {
+        my_lcd.Print_String("3",180,115);
+        bUnidad = false; 
+      } else
+      {
+        my_lcd.Print_String("3",150,115);
+      }
+      p.x = 0;
+      p.y = 0;
+    }else if ((p.x>5) && (p.x<82) && (p.y>300) && (p.y<370))
+    {
+      //he pulsado 4
+      delay(250);
+      if (bUnidad)
+      {
+        my_lcd.Print_String("4",180,115);
+        bUnidad = false; 
+      } else
+      {
+        my_lcd.Print_String("4",150,115);
+      }
+      p.x = 0;
+      p.y = 0;
+    }else if ((p.x>82) && (p.x<158) && (p.y>300) && (p.y<370))
+    {
+      //he pulsado 5
+      delay(250);
+      if (bUnidad)
+      {
+        my_lcd.Print_String("5",180,115);
+        bUnidad = false; 
+      } else
+      {
+        my_lcd.Print_String("5",150,115);
+      }
+      p.x = 0;
+      p.y = 0;
+    } else if ((p.x>158) && (p.x<233) && (p.y>300) && (p.y<370))
+    {
+      //he pulsado 6
+      delay(250);
+      if (bUnidad)
+      {
+        my_lcd.Print_String("6",180,115);
+        bUnidad = false; 
+      } else
+      {
+        my_lcd.Print_String("6",150,115);
+      }
+      p.x = 0;
+      p.y = 0;
+    } else if ((p.x>233) && (p.x<315) && (p.y>300) && (p.y<370))
+    {
+      //he pulsado 7
+      delay(250);
+      if (bUnidad)
+      {
+        my_lcd.Print_String("7",180,115);
+        bUnidad = false; 
+      } else
+      {
+        my_lcd.Print_String("7",150,115);
+      }
+      p.x = 0;
+      p.y = 0;
+    }else if ((p.x>5) && (p.x<82) && (p.y>370) && (p.y<440))
+    {
+      //he pulsado 8
+      delay(250);
+      if (bUnidad)
+      {
+        my_lcd.Print_String("8",180,115);
+        bUnidad = false; 
+      } else
+      {
+        my_lcd.Print_String("8",150,115);
+      }
+      p.x = 0;
+      p.y = 0;
+    }else if ((p.x>82) && (p.x<158) && (p.y>370) && (p.y<440))
+    {
+      //he pulsado 9
+      delay(250);
+      if (bUnidad)
+      {
+        my_lcd.Print_String("9",180,115);
+        bUnidad = false; 
+      } else
+      {
+        my_lcd.Print_String("9",150,115);
+      }
+      p.x = 0;
+      p.y = 0;
+    } else if ((p.x>158) && (p.x<233) && (p.y>300) && (p.y<370))
+    {
+      //he pulsado E
+      
+      p.x = 0;
+      p.y = 0;
+    } else if ((p.x>233) && (p.x<315) && (p.y>300) && (p.y<370))
+    {
+      //he pulsado C
+      delay(250);
+      
+      p.x = 0;
+      p.y = 0;
+    }
+    
   }
 }
