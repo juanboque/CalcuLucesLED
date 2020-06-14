@@ -189,6 +189,28 @@ void show_menu(void)
     my_lcd.Set_Draw_color(WHITE);
     my_lcd.Fill_Circle(270, 335, 30);
     show_string("7",260,320,4,BLACK, WHITE,1);
+
+    my_lcd.Set_Draw_color(WHITE);
+    my_lcd.Fill_Circle(45, 405, 30);
+    show_string("8",35,390,4,BLACK, WHITE,1);
+    
+    my_lcd.Set_Draw_color(WHITE);
+    my_lcd.Fill_Circle(120, 405, 30);
+    show_string("9",110,390,4,BLACK, WHITE,1);
+
+    my_lcd.Set_Draw_color(WHITE);
+    my_lcd.Fill_Circle(195, 405, 30);
+    show_string("E",185,390,4,BLACK, WHITE,1);
+
+    my_lcd.Set_Draw_color(WHITE);
+    my_lcd.Fill_Circle(270, 405, 30);
+    show_string("C",260,390,4,BLACK, WHITE,1);
+
+    my_lcd.Set_Text_Mode(3);
+    my_lcd.Set_Text_Size(2);
+    my_lcd.Set_Text_colour(WHITE);    
+    my_lcd.Print_String("INFO@XKEMATIC.COM",60,450);
+    
     delay(50000);
 }
                             
