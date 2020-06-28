@@ -90,9 +90,20 @@ LCDWIKI_KBV my_lcd(ILI9486,A3,A2,A1,A0,A4); //model,cs,cd,wr,rd,reset
 
 #define DELAY_PRESS 175
 
+#define PREMIO 5
+
 TouchScreen ts = TouchScreen(XP, YP, XM, YM, 300);
 
 int iResReal = 0, iResUser = 15;
+bool bSumaNivel = false;
+bool bRestas = false;
+bool bSuma = true;
+
+bool bUnidad = false;
+bool bDecena = false;
+bool bCentena = false;
+
+unsigned int iTotelResforLED = 0;
 
 //display string
 void show_string(uint8_t *str,int16_t x,int16_t y,uint8_t csize,uint16_t fc, uint16_t bc,boolean mode)
@@ -116,6 +127,8 @@ void show_keyboard(void)
 //      show_string(phone_button[i].button_name,phone_button[i].button_x-strlen(phone_button[i].button_name)*phone_button[i].button_name_size*6/2+phone_button[i].button_name_size/2+1,phone_button[i].button_y-phone_button[i].button_name_size*8/2+phone_button[i].button_name_size/2+1,phone_button[i].button_name_size,phone_button[i].button_name_colour,BLACK,1);
 //   }
 
+//    my_lcd.Set_Draw_color(BLUE);// Aquí se muestra los sumandos!!!
+//    my_lcd.Fill_Round_Rectangle(270, 10, 320, 100, 5);  
     my_lcd.Set_Draw_color(BLACK);// Aquí se muestra los sumandos!!!
     my_lcd.Fill_Round_Rectangle(110, 10, 215, 160, 5);
   
@@ -173,6 +186,45 @@ void show_keyboard(void)
     my_lcd.Print_String("INFO@XKEMATIC.COM",60,450);
 }
 
+void ShowSumatill_100(void)
+{
+  int iRand1, iRand2;
+  String str1, str2;
+ 
+  iRand1 = random(0,50);
+  iRand2 = random(0,50);
+  iResReal = iRand2 + iRand1;
+
+  str1 = iRand1;
+  str2 = iRand2;
+  my_lcd.Set_Draw_color(BLACK);// Aquí se muestra los sumandos!!!
+  my_lcd.Fill_Round_Rectangle(110, 10, 215, 100, 5);  
+  my_lcd.Set_Text_Mode(3);
+  my_lcd.Set_Text_Size(5);
+  my_lcd.Set_Text_colour(WHITE);
+  my_lcd.Set_Text_Back_colour(BLACK);
+  if (iRand1 >= 10)
+  {
+      my_lcd.Print_String(str1,150,20); 
+  } else
+  {
+      my_lcd.Print_String(str1,180,20); 
+  } 
+  my_lcd.Print_String("+",115,42); 
+  if (iRand2 >= 10)
+  {
+      my_lcd.Print_String(str2,150,65); 
+  } else
+  {
+      my_lcd.Print_String(str2,180,65); 
+  } 
+  my_lcd.Set_Draw_color(WHITE);
+  my_lcd.Draw_Line(120, 105, 215, 105);
+  my_lcd.Draw_Line(120, 106, 215, 106);
+  my_lcd.Draw_Line(120, 107, 215, 107);
+  my_lcd.Draw_Line(120, 108, 215, 108);  
+}
+
 void ShowSumatill_10(void)
 {// como la suma sumará como mucho 10 los números a sumar tienen que cumplir este requisito
   int iRand1, iRand2;
@@ -190,7 +242,7 @@ void ShowSumatill_10(void)
   my_lcd.Set_Text_Size(5);
   my_lcd.Set_Text_colour(WHITE);
   my_lcd.Set_Text_Back_colour(BLACK);
-  if (str1 == "10")
+  if (iRand1 >= 10)
   {
       my_lcd.Print_String(str1,150,20); 
   } else
@@ -198,6 +250,46 @@ void ShowSumatill_10(void)
       my_lcd.Print_String(str1,180,20); 
   }
   my_lcd.Print_String("+",115,42); 
+  if (iRand2 >= 10)
+  {
+      my_lcd.Print_String(str2,150,65); 
+  } else
+  {
+      my_lcd.Print_String(str2,180,65); 
+  }
+  
+  my_lcd.Set_Draw_color(WHITE);
+  my_lcd.Draw_Line(120, 105, 215, 105);
+  my_lcd.Draw_Line(120, 106, 215, 106);
+  my_lcd.Draw_Line(120, 107, 215, 107);
+  my_lcd.Draw_Line(120, 108, 215, 108);
+}
+
+void ShowRestasEasy_10(void)
+{// como la suma sumará como mucho 10 los números a sumar tienen que cumplir este requisito
+  int iRand1, iRand2;
+  String str1, str2;
+ 
+  iRand1 = random(0,10);
+  iRand2 = random(0,iRand1);
+  iResReal = iRand1 - iRand2;
+
+  str1 = iRand1;
+  str2 = iRand2;
+  my_lcd.Set_Draw_color(BLACK);// Aquí se muestra los sumandos!!!
+  my_lcd.Fill_Round_Rectangle(110, 10, 215, 100, 5);  
+  my_lcd.Set_Text_Mode(3);
+  my_lcd.Set_Text_Size(5);
+  my_lcd.Set_Text_colour(WHITE);
+  my_lcd.Set_Text_Back_colour(BLACK);
+  if (str1 == "10")
+  {
+      my_lcd.Print_String(str1,150,20); 
+  } else
+  {
+      my_lcd.Print_String(str1,180,20); 
+  }
+  my_lcd.Print_String("-",115,42); 
   if (str2 == "10")
   {
       my_lcd.Print_String(str2,150,65); 
@@ -212,6 +304,7 @@ void ShowSumatill_10(void)
   my_lcd.Draw_Line(120, 107, 215, 107);
   my_lcd.Draw_Line(120, 108, 215, 108);
 }
+
                             
 void setup(void) 
 {
@@ -220,7 +313,63 @@ void setup(void)
    Serial.println(my_lcd.Read_ID(), HEX);
    my_lcd.Fill_Screen(BLUE); 
    show_keyboard();
+   Menuoperacion();
    ShowSumatill_10();
+}
+
+void Menuoperacion()
+{
+  my_lcd.Set_Text_Mode(3);
+  my_lcd.Set_Text_Size(2);
+  my_lcd.Set_Text_colour(WHITE);
+  my_lcd.Set_Draw_color(BLUE);// Aquí se muestra los suma!!!
+  my_lcd.Fill_Round_Rectangle(230, 10, 315, 125, 5);
+  if (bSuma)
+  {
+    my_lcd.Print_String("+Nivel",240,20);
+    my_lcd.Print_String("Restas",240,60);
+    my_lcd.Set_Draw_color(NAVY);
+    my_lcd.Fill_Round_Rectangle(230, 90, 310, 125, 5);
+    my_lcd.Print_String("Sumas",240,100); 
+  } else if (bRestas)
+  {
+    my_lcd.Print_String("+Nivel",240,20);
+    my_lcd.Set_Draw_color(NAVY);
+    my_lcd.Fill_Round_Rectangle(230, 50, 315, 85, 5);
+    my_lcd.Print_String("Restas",240,60);
+    my_lcd.Print_String("Sumas",240,100); 
+  } else if (bSumaNivel)
+  {
+    my_lcd.Set_Draw_color(NAVY);
+    my_lcd.Fill_Round_Rectangle(230, 10, 315, 45, 5);
+    my_lcd.Print_String("+Nivel",240,20);
+    my_lcd.Print_String("Restas",240,60);
+    my_lcd.Print_String("Sumas",240,100); 
+  }
+}
+
+void ProcesaNumeros (unsigned int uiNum)
+{
+      String sNum = String(uiNum);
+      delay(DELAY_PRESS);
+      if (bUnidad == false)
+      {
+        iResUser = uiNum;
+        my_lcd.Set_Draw_color(BLACK);// Aquí se muestra los sumandos!!!
+        my_lcd.Fill_Round_Rectangle(110, 110, 215, 160, 5);
+        my_lcd.Print_String(sNum,180,115);
+        bUnidad = true;
+      } else if (bDecena == false)
+      {
+        iResUser = iResUser + uiNum;
+        bDecena = true;
+        my_lcd.Print_String(sNum,150,115);
+      }else if (bCentena == false)
+      {
+        bCentena = true;
+        iResUser = iResUser + uiNum;
+        my_lcd.Print_String(sNum,120,115);
+      }
 }
 
 void loop(void)
@@ -234,124 +383,77 @@ void loop(void)
   
   pinMode(XM, OUTPUT);
   pinMode(YP, OUTPUT);
-
-//  my_lcd.Set_Draw_color(RED);
-//  my_lcd.Draw_Line(5, 230, 315, 230);//primera linea horizontal que es común a todas las areas
-//  my_lcd.Draw_Line(5, 300, 315, 300);//segunda linea horizontal que es común a todas las areas
-//  my_lcd.Draw_Line(5, 370, 315, 370);//tercera linea horizontal que es común a todas las areas
-//  my_lcd.Draw_Line(5, 440, 315, 440);//cuarta linea horizontal que es común a todas las areas
-//  my_lcd.Draw_Line(5, 230, 5, 440); //primera linea vertical que es común a todas las areas
-//  my_lcd.Draw_Line(82, 230, 82, 440); //segunda linea vertical que es común a todas las areas
-//  my_lcd.Draw_Line(158, 230, 158, 440); //tercera linea vertical que es común a todas las areas
-//  my_lcd.Draw_Line(233, 230, 233, 440); //cuarta linea vertical que es común a todas las areas
   
   if (p.z > MINPRESSURE && p.z < MAXPRESSURE)
   {
-    //p.x = my_lcd.Get_Display_Width()-map(p.x, TS_MINX, TS_MAXX, my_lcd.Get_Display_Width(), 0);
-    //p.y = my_lcd.Get_Display_Height()-map(p.y, TS_MINY, TS_MAXY, my_lcd.Get_Display_Height(), 0);
     p.x = map(p.x, TS_MINX, TS_MAXX, my_lcd.Get_Display_Width(),0);
     p.y = map(p.y, TS_MINY, TS_MAXY, my_lcd.Get_Display_Height(),0);
 
-    if ((p.x>5) && (p.x<82) && (p.y>230) && (p.y<300))
+    if ((p.x>230) && (p.x<310) && (p.y>90) && (p.y<125))
+    {
+        //Si se pulsa aquí quiere hacer sumas
+        bSuma = true;
+        bRestas = false;
+        bSumaNivel = false;
+        Menuoperacion();
+        ShowSumatill_10();
+    }
+    else if ((p.x>230) && (p.x<320) && (p.y>10) && (p.y<45))
+    {
+      // Más Nível de Suma, sumas hasta 200 llevándose
+      bSumaNivel = true;
+      bSuma = false;
+      bRestas = false;
+      Menuoperacion();
+      ShowSumatill_100();
+    } else if ((p.x>230) && (p.x<315) && (p.y>=50) && (p.y<85))
+    {// si ha pulsado aquí se quieren hacer restas!
+        bRestas = true;
+        bSumaNivel = false;
+        bSuma = false;
+        Menuoperacion();
+        ShowRestasEasy_10();
+    }
+    else if ((p.x>5) && (p.x<82) && (p.y>230) && (p.y<300))
     {
       //he pulsado 0
-      iResUser = 0;
-      delay(DELAY_PRESS);
-      my_lcd.Set_Draw_color(BLACK);// Aquí se muestra los sumandos!!!
-      my_lcd.Fill_Round_Rectangle(110, 110, 215, 160, 5);
-      my_lcd.Print_String("0",180,115);
-      p.x = 0;
-      p.y = 0;
+      ProcesaNumeros (0);
     } else if ((p.x>82) && (p.x<158) && (p.y>230) && (p.y<300))
     {
       //he pulsado 1
-      iResUser = 1;
-      delay(DELAY_PRESS);
-      my_lcd.Set_Draw_color(BLACK);// Aquí se muestra los sumandos!!!
-      my_lcd.Fill_Round_Rectangle(110, 110, 215, 160, 5);
-      my_lcd.Print_String("1",180,115);
-      p.x = 0;
-      p.y = 0;
+      ProcesaNumeros (1);
     }else if ((p.x>158) && (p.x<233) && (p.y>230) && (p.y<300))
     {
       //he pulsado 2
-      iResUser = 2;
-      delay(DELAY_PRESS);
-      my_lcd.Set_Draw_color(BLACK);// Aquí se muestra los sumandos!!!
-      my_lcd.Fill_Round_Rectangle(110, 110, 215, 160, 5);
-      my_lcd.Print_String("2",180,115);
-      p.x = 0;
-      p.y = 0;
+      ProcesaNumeros (2);
     }else if ((p.x>233) && (p.x<315) && (p.y>230) && (p.y<300))
     {
       //he pulsado 3
-      iResUser = 3;
-      delay(DELAY_PRESS);
-      my_lcd.Set_Draw_color(BLACK);// Aquí se muestra los sumandos!!!
-      my_lcd.Fill_Round_Rectangle(110, 110, 215, 160, 5);
-      my_lcd.Print_String("3",180,115);
-      p.x = 0;
-      p.y = 0;
+      ProcesaNumeros (3);
     }else if ((p.x>5) && (p.x<82) && (p.y>300) && (p.y<370))
     {
       //he pulsado 4
-      iResUser = 4;
-      delay(DELAY_PRESS);
-      my_lcd.Set_Draw_color(BLACK);// Aquí se muestra los sumandos!!!
-      my_lcd.Fill_Round_Rectangle(110, 110, 215, 160, 5);
-      my_lcd.Print_String("4",180,115);
-      p.x = 0;
-      p.y = 0;
+      ProcesaNumeros (4);
     }else if ((p.x>82) && (p.x<158) && (p.y>300) && (p.y<370))
     {
       //he pulsado 5
-      delay(DELAY_PRESS);
-      iResUser = 5;
-      my_lcd.Set_Draw_color(BLACK);// Aquí se muestra los sumandos!!!
-      my_lcd.Fill_Round_Rectangle(110, 110, 215, 160, 5);
-      my_lcd.Print_String("5",180,115);
-      p.x = 0;
-      p.y = 0;
+      ProcesaNumeros (5);
     } else if ((p.x>158) && (p.x<233) && (p.y>300) && (p.y<370))
     {
       //he pulsado 6
-      delay(DELAY_PRESS);
-      iResUser = 6;
-      my_lcd.Set_Draw_color(BLACK);// Aquí se muestra los sumandos!!!
-      my_lcd.Fill_Round_Rectangle(110, 110, 215, 160, 5);
-      my_lcd.Print_String("6",180,115);
-      p.x = 0;
-      p.y = 0;
+      ProcesaNumeros (6);
     } else if ((p.x>233) && (p.x<315) && (p.y>300) && (p.y<370))
     {
       //he pulsado 7
-      delay(DELAY_PRESS);
-      iResUser = 7;
-      my_lcd.Set_Draw_color(BLACK);// Aquí se muestra los sumandos!!!
-      my_lcd.Fill_Round_Rectangle(110, 110, 215, 160, 5);
-      my_lcd.Print_String("7",180,115);
-      p.x = 0;
-      p.y = 0;
+      ProcesaNumeros (7);
     }else if ((p.x>5) && (p.x<82) && (p.y>370) && (p.y<440))
     {
       //he pulsado 8
-      delay(DELAY_PRESS);
-      iResUser = 8;
-      my_lcd.Set_Draw_color(BLACK);// Aquí se muestra los sumandos!!!
-      my_lcd.Fill_Round_Rectangle(110, 110, 215, 160, 5);
-      my_lcd.Print_String("8",180,115);
-      p.x = 0;
-      p.y = 0;
+      ProcesaNumeros (8);
     }else if ((p.x>82) && (p.x<158) && (p.y>370) && (p.y<440))
     {
       //he pulsado 9
-      delay(DELAY_PRESS);
-      iResUser = 9;
-      my_lcd.Set_Draw_color(BLACK);// Aquí se muestra los sumandos!!!
-      my_lcd.Fill_Round_Rectangle(110, 110, 215, 160, 5);
-      my_lcd.Print_String("9",180,115);
-      p.x = 0;
-      p.y = 0;
+      ProcesaNumeros (9);
     } else if ((p.x>158) && (p.x<233) && (p.y>370) && (p.y<440))
     {
       //he pulsado E
@@ -370,7 +472,22 @@ void loop(void)
         my_lcd.Set_Draw_color(BLUE);// Aquí se muestra los sumandos!!!
         my_lcd.Fill_Round_Rectangle(10, 220, 330, 165, 5);
         //aquí se activarían las luces, durante un minuto o así
-        ShowSumatill_10();        
+        if (bSumaNivel)
+        {
+          ShowSumatill_100();
+        } else if (bRestas)
+        {
+          ShowRestasEasy_10();
+        } else if (bSuma) 
+        {
+          ShowSumatill_10();  
+        }
+        iTotelResforLED++;
+        if (iTotelResforLED == PREMIO)
+        {
+          // llama a funcion que enciende los LED´s
+          
+        }
       } else 
       {
         my_lcd.Set_Draw_color(BLACK);// Aquí se muestra los sumandos!!!
@@ -383,17 +500,20 @@ void loop(void)
         my_lcd.Print_String("ERROR, OTRA VEZ.",20,180);
         my_lcd.Set_Text_Size(5);
       }
-      p.x = 0;
-      p.y = 0;
+      bUnidad = false;
+      bDecena = false;
+      bCentena = false;
     } else if ((p.x>233) && (p.x<315) && (p.y>370) && (p.y<440))
     {
       //he pulsado C
       delay(DELAY_PRESS);    
       my_lcd.Set_Draw_color(BLACK);// Aquí se muestra los sumandos!!!
-      my_lcd.Fill_Round_Rectangle(110, 110, 215, 160, 5);  
-      p.x = 0;
-      p.y = 0;
+      my_lcd.Fill_Round_Rectangle(110, 110, 215, 160, 5);
+      bUnidad = false;
+      bDecena = false;
+      bCentena = false;  
     }
-    
   }
+  p.x = 0;
+  p.y = 0;
 }
