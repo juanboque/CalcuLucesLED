@@ -518,6 +518,7 @@ void loop(void)
           rainbowFade2White(3, 3, 1);
           iTotelResforLED=0;
         }
+        ApagarLuces();
       } else 
       {
         my_lcd.Set_Draw_color(BLACK);// Aquí se muestra los sumandos!!!
@@ -548,6 +549,15 @@ void loop(void)
   p.y = 0;
 }
 
+void ApagarLuces()
+{
+  
+    for(int i=0; i<strip.numPixels(); i++) { // For each pixel in strip...
+      strip.fill(strip.Color(0, 0, 0));
+      strip.show();
+      delay(10);
+    }
+}
 // Fill strip pixels one after another with a color. Strip is NOT cleared
 // first; anything there will be covered pixel by pixel. Pass in color
 // (as a single 'packed' 32-bit value, which you can get by calling
