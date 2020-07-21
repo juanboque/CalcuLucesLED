@@ -49,7 +49,7 @@ LCDWIKI_KBV my_lcd(ILI9486,A3,A2,A1,A0,A4); //model,cs,cd,wr,rd,reset
 #define LED_PIN    23
 
 // How many NeoPixels are attached to the Arduino?
-#define LED_COUNT  14
+#define LED_COUNT  17
 
 // NeoPixel brightness, 0 (min) to 255 (max)
 #define BRIGHTNESS 100
@@ -388,13 +388,13 @@ void ProcesaNumeros (unsigned int uiNum)
         bUnidad = true;
       } else if (bDecena == false)
       {
-        iResUser = iResUser + uiNum;
+        iResUser = iResUser + (uiNum*10);
         bDecena = true;
         my_lcd.Print_String(sNum,150,115);
       }else if (bCentena == false)
       {
         bCentena = true;
-        iResUser = iResUser + uiNum;
+        iResUser = iResUser + (uiNum*100);
         my_lcd.Print_String(sNum,120,115);
       }
 }
@@ -521,6 +521,8 @@ void loop(void)
         ApagarLuces();
       } else 
       {
+        Serial.print("iResUser: ");Serial.println(iResUser);
+        Serial.print("iResReal: ");Serial.println(iResReal);
         my_lcd.Set_Draw_color(BLACK);// Aquí se muestra los sumandos!!!
         my_lcd.Fill_Round_Rectangle(110, 110, 215, 160, 5);  
 
@@ -620,8 +622,16 @@ void pulseWhite(uint8_t wait) {
     delay(wait);
   }
 
-  for(int j=255; j>=0; j--) { // Ramp down from 255 to 0
-    strip.fill(strip.Color(0, 0, 0, strip.gamma8(j)));
+  for(int j=0; j<256; j++) { // Ramp up from 0 to 255
+    // Fill entire strip with white at gamma-corrected brightness level 'j':
+    strip.fill(strip.Color(0, 0, 150));
+    strip.show();
+    delay(wait);
+  }
+
+    for(int j=0; j<256; j++) { // Ramp up from 0 to 255
+    // Fill entire strip with white at gamma-corrected brightness level 'j':
+    strip.fill(strip.Color(150, 0, 0));
     strip.show();
     delay(wait);
   }
@@ -667,12 +677,12 @@ void rainbowFade2White(int wait, int rainbowLoops, int whiteLoops) {
   for(int k=0; k<whiteLoops; k++) {
     for(int j=0; j<256; j++) { // Ramp up 0 to 255
       // Fill entire strip with white at gamma-corrected brightness level 'j':
-      strip.fill(strip.Color(0, 0, 0, strip.gamma8(j)));
+      strip.fill(strip.Color(strip.gamma8(j), strip.gamma8(j), strip.gamma8(j) ));
       strip.show();
     }
     delay(1000); // Pause 1 second
     for(int j=255; j>=0; j--) { // Ramp down 255 to 0
-      strip.fill(strip.Color(0, 0, 0, strip.gamma8(j)));
+      strip.fill(strip.Color(strip.gamma8(j), strip.gamma8(j), strip.gamma8(j)));
       strip.show();
     }
   }
