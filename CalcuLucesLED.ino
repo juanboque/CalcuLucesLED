@@ -498,7 +498,7 @@ void loop(void)
         my_lcd.Fill_Round_Rectangle(110, 110, 215, 160, 5);
         my_lcd.Set_Draw_color(BLUE);// Aquí se muestra los sumandos!!!
         my_lcd.Fill_Round_Rectangle(10, 220, 330, 165, 5);
-        whiteOverRainbow(75, 5);
+        pulseWhite(5);
         if (bSumaNivel)
         {
           ShowSumatill_100();
